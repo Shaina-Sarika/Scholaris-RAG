@@ -13,17 +13,14 @@ from get_yt_video import get_yt_video_link
 from vectorize_script import build_vectors
 
 
-
-# Load environment variables
 load_dotenv()
-DEVICE = os.getenv('DEVICE', 'cpu')  # Default to 'cpu' if not set
+DEVICE = os.getenv('DEVICE', 'cpu')
 
 working_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(working_dir)
 
 subjects_list = ["Biology", "Physics", "Chemistry"]
 
-# Helper to setup vectorstore and chat_chain
 def get_vector_db_path(chapter, subject):
     if chapter == "All Chapters":
         return f"{parent_dir}/vector_db/class_12_{subject.lower()}_vector_db"
@@ -69,7 +66,6 @@ st.set_page_config(
 
 st.title("📚 Scholaris")
 
-# Initialize the chat history and video history as session state in Streamlit
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "video_history" not in st.session_state:
@@ -91,16 +87,13 @@ if selected_subject:
     )
 
     if selected_chapter:
-        # Reset chat_chain if chapter changes
         if st.session_state.get('selected_chapter') != selected_chapter:
             st.session_state.chat_chain = setup_chain(selected_chapter, selected_subject)
         st.session_state.selected_chapter = selected_chapter
 
-# Display previous messages
 for idx, message in enumerate(st.session_state.chat_history):
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-        # Show video references if present for assistant messages
         if message["role"] == "assistant" and idx < len(st.session_state.video_history):
             video_refs = st.session_state.video_history[idx]
             if video_refs:
@@ -108,12 +101,11 @@ for idx, message in enumerate(st.session_state.chat_history):
                 for title, link in video_refs:
                     st.info(f"{title}\n\nLink: {link}")
 
-# Input field for user's message
 user_input = st.chat_input("Ask AI")
 
 if user_input:
     st.session_state.chat_history.append({"role": "user", "content": user_input})
-    st.session_state.video_history.append(None)  # No video refs for user
+    st.session_state.video_history.append(None)
 
     with st.chat_message("user"):
         st.markdown(user_input)
