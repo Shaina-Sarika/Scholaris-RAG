@@ -13,7 +13,3 @@ def get_chapter_list(selected_subject):
         chapters_list = [x[:-4] for x in chapters_list]
         chapters_list.sort(key=lambda x: int(x.split('.')[0]))
         return chapters_list
-
-
-# chapters_list = get_chapter_list("Biology")
-# print(chapters_list)
